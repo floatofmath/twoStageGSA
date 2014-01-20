@@ -1,0 +1,89 @@
+<!-- \VignetteEngine{knitr::knitr} -->
+
+# twoStageGSA: Two Stage Gene Set Analysis
+
+This packages provides R functions to perform ["A Flexible Two Stage
+Procedure for Identifying Gene Sets that are Differentially Expressed"
+(Heller, et al. 2009)][hel09]
+
+
+## How to use the package
+
+First we load `twoStageGSA`. We will also make use of pathway database
+`KEGG.db` and annotation database `hgu95av2.db`.
+
+```{r}
+library(twoStageGSA)
+library(reactome.db)
+library(hgu95av2.db)
+```
+
+### Screening step
+
+```{r}
+
+m <- 6
+G <- 1000
+data <- matrix(rnorm(m*G),ncol= m) +
+  cbind(matrix(0,nc=m/2,nr=G),matrix(rep(rnorm(G,sd=2/3),3),nc=3))
+labels <- rep(c(0,1),each=m/2)
+
+```
+
+To set up the example we simulate expressions of `r G` genes from `r
+m` samples. We assume two distinct groups and add some effects to one
+the samples in one of them. 
+
+To make annotations work we assign random probe ids from Affymetrix'
+hgu95av2 microarray as rownames of our dataset and randomly draw
+100 genesets of different lengths from those. 
+
+```{r}
+genes <- keys(hgu95av2SYMBOL,keytype="ENTREZID")
+rownames(data) <- sample(genes,G)
+geneSets <- sapply(sample(10:100,100,rep=T),function(n) sample(rownames(data),n))
+pathways <- keys(reactome.db,keytype="PATHID")
+names(geneSets) <- sample(pathways,length(geneSets))
+
+geneSets[[1]][1:10]
+
+head(data)
+
+```
+For reporting we need to compute mean differences between groups. This
+will be used to determine the direction of the effect. 
+
+```{r}
+diff <- rowMeans(data[,labels==1])-rowMeans(data[,labels==0])
+```
+
+We perform the screening step using the `globalTest` to test each
+geneset for enrichment. 
+```{r}
+out <- screening(data,labels,geneSets,B=0,settest='globalTest')
+```
+We then use the function `t.test` for single gene tests and adjust
+form multiplicity using the Bonferroni Holm procedure.
+
+```{r}
+fc <- focus(data,labels,geneSets,out$sigSets,test='t.test',adj='holm')
+```
+
+To produce nice reports we have to pass appropriate annotation
+databases to the reporting functions. 
+
+```{r}
+
+reportScreening(out,pw.annotation = reactome.db,
+                pw.kv = c('PATHID','PATHNAME'))
+reportFocus(out,fc,diff,q=.5,
+            pw.annotation=reactome.db,
+            gene.annotation = hgu95av2.db,
+            pw.kv = c('PATHID','PATHNAME'),
+            gene.kv = c('PROBEID','SYMBOL'))
+```
+
+
+[hel09] Heller, R., Manduchi, E., Grant, G. R., & Ewens,
+W. J. (2009). A flexible two-stage procedure for identifying gene sets
+that are differentially expressed. Bioinformatics, 25(8), 1019-1025.
