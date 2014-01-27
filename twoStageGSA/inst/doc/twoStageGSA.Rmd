@@ -7,18 +7,16 @@ Procedure for Identifying Gene Sets that are Differentially Expressed"
 (Heller, et al. 2009)][hel09]
 
 
-## How to use the package
+## A quick example
 
 First we load `twoStageGSA`. We will also make use of pathway database
-`KEGG.db` and annotation database `hgu95av2.db`.
+`reactome.db` and annotation database `hgu95av2.db`.
 
 ```{r}
 library(twoStageGSA)
 library(reactome.db)
 library(hgu95av2.db)
 ```
-
-### Screening step
 
 ```{r}
 
@@ -44,14 +42,27 @@ rownames(data) <- sample(genes,G)
 geneSets <- sapply(sample(10:100,100,rep=T),function(n) sample(rownames(data),n))
 pathways <- keys(reactome.db,keytype="PATHID")
 names(geneSets) <- sample(pathways,length(geneSets))
+```
 
+``geneSets`` is just a list of character vectors containing the probe
+IDs making up the gene sets.
+
+
+
+```{r}
 geneSets[[1]][1:10]
+```
 
+``data`` is a matrix where each line corresponds to a probe and each
+column to a sample. Here, the row names correspond to the probe IDs. 
+
+```{r}
 head(data)
 
 ```
-For reporting we need to compute mean differences between groups. This
-will be used to determine the direction of the effect. 
+
+Next we compute mean differences between groups. This will be used to
+determine the direction of the effect.
 
 ```{r}
 diff <- rowMeans(data[,labels==1])-rowMeans(data[,labels==0])
@@ -59,6 +70,7 @@ diff <- rowMeans(data[,labels==1])-rowMeans(data[,labels==0])
 
 We perform the screening step using the `globalTest` to test each
 geneset for enrichment. 
+
 ```{r}
 out <- screening(data,labels,geneSets,B=0,settest='globalTest')
 ```
@@ -83,6 +95,56 @@ reportFocus(out,fc,diff,q=.5,
             gene.kv = c('PROBEID','SYMBOL'))
 ```
 
+## Different global test procedures for the screening step
 
+``twoStageGSA' provides several global test procedures to test the
+intersection null hypotheses that there is no difference in gene
+expression between genes in a gene set.
+
+### Global test [goe04]
+
+### Hotelling T-test 
+
+### Nettleton [net08]
+
+
+## Writing custom screening test procedures 
+
+## Writing custom focus test procedures
+
+### Re-using results from previous analyses
+
+In case that a single gene differential analysis has already been
+performed, it may be reasonable to reuse the outcome of this
+analysis. For the focus step it is natural to use the same test
+procedure that one would use in a single gene analysis. If that has
+already been performed on ``twoStageGSA`` permits to use the
+un-adjusted p-values.
+
+```{r}
+p <- apply(data,1,function(x) t.test(x~labels)$p.value)
+
+fc <- focus(data,labels,geneSets,out$sigSets,test=p,adj='holm',reuse.p=T)
+reportFocus(out,fc,diff,q=.5,
+            pw.annotation=reactome.db,
+            gene.annotation = hgu95av2.db,
+            pw.kv = c('PATHID','PATHNAME'),
+            gene.kv = c('PROBEID','SYMBOL'))
+
+```
+
+### Inverse normal combination test
+
+### Simes test
+
+### Bonferroni-Holm test
+
+
+
+
+[goe04]:
+http://bioinformatics.oxfordjournals.org/content/20/1/93.short "Goeman, J. J., Van De Geer, S. A., De Kort, F., & Van Houwelingen, H. C. (2004). A global test for groups of genes: testing association with a clinical outcome. Bioinformatics, 20(1), 93-99."
+[net08]:
+http://bioinformatics.oxfordjournals.org/content/24/2/192.short "Nettleton, D., Recknor, J., & Reecy, J. M. (2008). Identification of differentially expressed gene categories in microarray studies using nonparametric multivariate analysis. Bioinformatics, 24(2), 192-201."
 [hel09]:
 http://bioinformatics.oxfordjournals.org/content/25/8/1019.short "Heller, R., Manduchi, E., Grant, G. R., & Ewens, W. J. (2009). A flexible two-stage procedure for identifying gene sets that are differentially expressed. Bioinformatics, 25(8), 1019-1025."

@@ -8,12 +8,13 @@ focus <- function(data,labels,genesets,sigSets,B=100,test="wilcoxon",side='abs',
     names(out) <- out$index
   }
   focusBonfH <- function(idx){
-    testfun <- match.fun(test)
-    idx <- rownames(data)[which(rownames(data) %in% genesets[[idx]])]
-    if(reuse.p){
-      return(testfun(idx))
-    }
-    out <- apply(data[idx,],1,function(x) testfun(x~labels)$p.value)
+      if(reuse.p){
+          out <- test
+      } else {
+          testfun <- match.fun(test)
+          idx <- rownames(data)[which(rownames(data) %in% genesets[[idx]])]
+          out <- apply(data[idx,],1,function(x) testfun(x~labels)$p.value)
+      }
     ans <- p.adjust(out,method='holm')
     return(ans)
   }
