@@ -1,13 +1,13 @@
 ## Apply screening stage of procedure
 
-screening <- function(data,labels,genesets,B=0,q=.05,settest='globalTest',min=6,max=100){
+screening <- function(data,labels,genes=rownames(data),genesets,B=0,q=.05,settest='globalTest',min=6,max=100){
   ## prune genes which are not part of any geneset
-  toSmall <- which(sapply(genesets,function(set) sum(rownames(data) %in% set)<=min))
-  toLarge <- which(sapply(genesets,function(set) sum(rownames(data) %in% set)>=max))
+  toSmall <- which(sapply(genesets,function(set) sum(genes %in% set)<=min))
+  toLarge <- which(sapply(genesets,function(set) sum(genes %in% set)>=max))
   if(length(c(toSmall,toLarge))>0){
       genesets <- genesets[-c(toSmall,toLarge)]
   }
-  inSet <- unlist(sapply(genesets,function(set) which(rownames(data) %in% set)))
+  inSet <- unlist(sapply(genesets,function(set) which(genes %in% set)))
   impW <- tabulate(inSet)/length(inSet)
   inSet <- sort(unique(inSet))
   data <- data[inSet,]

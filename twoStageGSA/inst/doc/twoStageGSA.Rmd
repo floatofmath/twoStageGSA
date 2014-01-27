@@ -84,6 +84,5 @@ reportFocus(out,fc,diff,q=.5,
 ```
 
 
-[hel09] Heller, R., Manduchi, E., Grant, G. R., & Ewens,
-W. J. (2009). A flexible two-stage procedure for identifying gene sets
-that are differentially expressed. Bioinformatics, 25(8), 1019-1025.
+[hel09]:
+http://bioinformatics.oxfordjournals.org/content/25/8/1019.short "Heller, R., Manduchi, E., Grant, G. R., & Ewens, W. J. (2009). A flexible two-stage procedure for identifying gene sets that are differentially expressed. Bioinformatics, 25(8), 1019-1025."

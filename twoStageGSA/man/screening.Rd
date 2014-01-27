@@ -8,7 +8,7 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-screening(data, labels, genesets, B = 0, q = 0.05, settest = "globalTest", min = 6, max = 100)
+screening(data, labels, genes = rownames(data), genesets, B = 0, q = 0.05, settest = "globalTest", min = 6, max = 100)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,6 +18,11 @@ screening(data, labels, genesets, B = 0, q = 0.05, settest = "globalTest", min =
   \item{labels}{
 %%     ~~Describe \code{labels} here~~
 }
+\item{genes}{
+  vector of gene identifiers specifying the gene each row of data
+  corresponds to and that match to the identifyers used to define gene
+  sets. If not given rownames are assumed to be gene identifyers.
+  }
   \item{genesets}{
 %%     ~~Describe \code{genesets} here~~
 }
