@@ -1,13 +1,14 @@
 Package: twoStageGSA
-Version: 0.0-1
-Date: 2014-16-1
+Version: 0.0-2
+Date: 2014-07-02
 Title: Two Stage Gene Set Analysis
 Authors@R: c(person("float", "Developer", role = c("aut", "cre"),
                      email = "florian.klinglmueller@meduniwien.ac.at"))
 Author: Florian Klinglmueller
-Maintainer: Florian Klinglmueller <florian.klinglmueller@meduniwien.ac.at>
+Maintainer: Florian Klinglmueller
+        <florian.klinglmueller@meduniwien.ac.at>
 Depends: R (>= 3.0.0), globaltest, multtest, MASS
 Suggests: parallel
 Description: Provides a Flexible Two Stage Procedure for Identifying Gene Sets that are Differentially  Expressed 
 License: MIT
-
+Packaged: 2014-02-07 12:35:07 UTC; float
