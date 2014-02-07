@@ -1,6 +1,6 @@
 ## Hotelling's t-test
 
-hotellingT <- function(set,perm,d,l){
+screening_hotellingT <- function(set,perm,d,l){
   hotelling <- function(d1,d2){
     k <- ncol(d1)
     n1 <- nrow(d1)

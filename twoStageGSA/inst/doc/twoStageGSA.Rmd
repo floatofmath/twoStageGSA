@@ -122,9 +122,15 @@ already been performed on ``twoStageGSA`` permits to use the
 un-adjusted p-values.
 
 ```{r}
-p <- apply(data,1,function(x) t.test(x~labels)$p.value)
+myps <- apply(data,1,function(x) t.test(x~labels)$p.value)
 
-fc <- focus(data,labels,geneSets,out$sigSets,test=p,adj='holm',reuse.p=T)
+screening_myminps <- function(set,perm,d,l){
+    minp <- min(myps[set])
+}
+    
+out <- screening(data,labels,geneSets,B=0,settest='myminps')
+
+fc <- focus(data,labels,geneSets,out$sigSets,test=myps,adj='holm',reuse.p=T)
 reportFocus(out,fc,diff,q=.5,
             pw.annotation=reactome.db,
             gene.annotation = hgu95av2.db,

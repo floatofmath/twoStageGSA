@@ -8,7 +8,7 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-screening(data, labels, genes = rownames(data), genesets, B = 0, q = 0.05, settest = "globalTest", min = 6, max = 100)
+screening(data, labels, genesets, genes = rownames(data),  B = 0, q = 0.05, settest = "globalTest", min = 6, max = 100)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,24 +16,29 @@ screening(data, labels, genes = rownames(data), genesets, B = 0, q = 0.05, sette
 %%     ~~Describe \code{data} here~~
 }
   \item{labels}{
-%%     ~~Describe \code{labels} here~~
-}
-\item{genes}{
-  vector of gene identifiers specifying the gene each row of data
-  corresponds to and that match to the identifyers used to define gene
-  sets. If not given rownames are assumed to be gene identifyers.
+    Object defining the group labels of the dataset. E.g. for
+    globalTest this may be a factor.
   }
   \item{genesets}{
-%%     ~~Describe \code{genesets} here~~
+    A list whose elements are vectors of gene identifiers representing
+    the gene sets.  
+  }
+
+\item{genes}{ vector of gene identifiers specifying the gene each row of
+  data corresponds to and that match to the identifyers used to define
+  gene sets. If not given rownames are assumed to be gene identifyers.
 }
+
   \item{B}{
 %%     ~~Describe \code{B} here~~
 }
   \item{q}{
 %%     ~~Describe \code{q} here~~
 }
-  \item{settest}{
-%%     ~~Describe \code{settest} here~~
+\item{settest}{
+  A character string giving the name of the screening test
+  procedure. Either one of the methods already implemented in the
+  package, or a custom test function (see Details). 
 }
   \item{min}{
 %%     ~~Describe \code{min} here~~
@@ -43,7 +48,12 @@ screening(data, labels, genes = rownames(data), genesets, B = 0, q = 0.05, sette
 }
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+  twoStageGSA provides a couple of screening test procedures. Those are
+  'globalTest', 'invNormal', 'hotellingT', and 'nettleton'. Custom
+  functions may be used. In that case settest has to point to a function
+  with the name matching paste('screening_',settest). The corresponding
+  function needs to return an unadjusted p-value for a given
+  geneset. See the vignette for some examples.
 }
 \value{
 %%  ~Describe the value returned

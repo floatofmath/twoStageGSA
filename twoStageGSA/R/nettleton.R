@@ -4,7 +4,7 @@
 # Date: August 7, 2007                                                         #
 # Downloaded from: http://www.public.iastate.edu/~dnett/useR/GeneCatTesting.txt#
 ################################################################################
-nettleton <- function(set,perm,d,l) {
+screening_nettleton <- function(set,perm,d,l) {
   mrpp(l,e.com(t(d[set,])),nperm=perm)
 }
 
