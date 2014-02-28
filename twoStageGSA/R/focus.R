@@ -1,19 +1,30 @@
 ## Apply focus step of procedure
 
-focus <- function(data,labels,genesets,sigSets,B=100,test="wilcoxon",side='abs',adjust="WY",reuse.p=F){
+focus <- function(data,labels,genesets,sigSets,genes=rownames(data),B=100,test="wilcoxon",side='abs',adjust="WY",reuse.p=F){
+  if(reuse.p){
+      if(!(length(genes) == length(test))){
+          stop(paste("Number of genes (",length(genes),") needs to match number of p-values (",length(test),")",sep=''))
+      }
+  }
   focusWY <- function(idx){
-    idx <- which(rownames(data) %in% genesets[[idx]])
-    out <- mt.minP(data[idx,],labels,test = test,  B=B, side=side)
+      if(reuse.p){
+          stop("Re-using p-values with Westfall & Young is not possible")
+      }
+    gidx <- which(genes %in% genesets[[idx]])
+    out <- mt.minP(data[gidx,],labels,test = test,  B=B, side=side)
     ans <- out$adjp
     names(out) <- out$index
   }
   focusBonfH <- function(idx){
       if(reuse.p){
-          out <- test
+          
+          gidx <- which(genes %in% genesets[[idx]])
+          
+          out <- test[gidx]
       } else {
           testfun <- match.fun(test)
-          idx <- rownames(data)[which(rownames(data) %in% genesets[[idx]])]
-          out <- apply(data[idx,],1,function(x) testfun(x~labels)$p.value)
+          gidx <- which(genes %in% genesets[[idx]])
+          out <- apply(data[gidx,],1,function(x) testfun(x~labels)$p.value)
       }
     ans <- p.adjust(out,method='holm')
     return(ans)
@@ -23,6 +34,7 @@ focus <- function(data,labels,genesets,sigSets,B=100,test="wilcoxon",side='abs',
            WY = focusWY(idx),
            holm = focusBonfH(idx))
   }
+  
   pWY <- lapply(sigSets,focusTest)
   return(pWY)
 }

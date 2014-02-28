@@ -8,7 +8,7 @@
   step, which only tests gene sets. 
 }
 \usage{
-focus(data, labels, genesets, sigSets, B = 100, test = "wilcoxon", side = "abs", adjust = "WY", reuse.p = F)
+focus(data, labels, genesets, sigSets, genes = rownames(data), B = 100, test = "wilcoxon", side = "abs", adjust = "WY", reuse.p = F)
 }
 \arguments{
   \item{data}{
@@ -22,9 +22,12 @@ focus(data, labels, genesets, sigSets, B = 100, test = "wilcoxon", side = "abs",
 }
   \item{sigSets}{
     Output from screening step
-}
+  }
+  \item{genes}{
+    Vector with gene identifier
+  }
   \item{B}{
-    Number of resampling iterations
+    Number of resampling iterations (e.g. for Westfall & Young)
 }
   \item{test}{
     name of test function, if reuse.p is FALSE a test function that
