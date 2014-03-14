@@ -24,10 +24,11 @@ screening <- function(data,labels,genesets,genes=rownames(data),B=0,q=.05,settes
   idSets <- lapply(genesets,function(set) which(genes %in% set))
   ## some helpful constants
   S <- length(genesets)
-  n <- max(sapply(genesets,length))
+  L <- sapply(genesets,length)
+  n <- max(L)
   G <- nrow(data)
   m <- ncol(data)
-
+  
   ## compute set test p.value and correct FDR
   pmrpp <- sapply(idSets,match.fun(paste("screening_",settest,sep='')),perm=B,d=data,l=labels)
   names(pmrpp) <- names(genesets)
@@ -35,6 +36,6 @@ screening <- function(data,labels,genesets,genes=rownames(data),B=0,q=.05,settes
 
   ##################### sets significant at the alpha FDR level
   sigSets <- names(genesets)[which(q.vals <= q)]
-  return(list(sigSets=sigSets,qVal=q.vals))
+  return(list(sigSets=sigSets,qVal=q.vals,size=L))
 
 }

@@ -2,12 +2,12 @@ reportScreening <- function(scr,pw.annotation,pw.kv){
   if(length(scr$sigSets)<1) return(NULL)
   annotation <- join.duplicated(AnnotationDbi:::select(pw.annotation,keys=scr$sigSets,keytype=pw.kv[1],columns=pw.kv[2]))
   if(length(scr$sigSets)==1) {
-    tout <- c(scr$sigSets,annotation,round(scr$qVal[scr$sigSets],3))
-    names(tout) <- c('Gene Set ID','Gene Set Description','FDR adj. q-Value')
+    tout <- c(scr$sigSets,annotation,scr$size[scr$sigSets],round(scr$qVal[scr$sigSets],3))
+    names(tout) <- c('Gene Set ID','Gene Set Description','# Genes','FDR adj. q-Value')
     return(tout)
   }
-  tout <- data.frame(k=scr$sigSets,v=annotation,e=round(scr$qVal[scr$sigSets],3))
-  colnames(tout) <- c('Gene Set ID','Gene Set Description','FDR adj. q-Value')
+  tout <- data.frame(k=scr$sigSets,v=annotation,l=scr$size[scr$sigSets],e=round(scr$qVal[scr$sigSets],3))
+  colnames(tout) <- c('Gene Set ID','Gene Set Description','# Genes','FDR adj. q-Value')
   o <- order(tout[,3])
   rownames(tout) <- 1:nrow(tout)
   tout[o,]
