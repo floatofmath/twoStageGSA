@@ -8,7 +8,7 @@ reportScreening <- function(scr,pw.annotation,pw.kv){
   }
   tout <- data.frame(k=scr$sigSets,v=annotation,l=scr$size[scr$sigSets],e=round(scr$qVal[scr$sigSets],3))
   colnames(tout) <- c('Gene Set ID','Gene Set Description','# Genes','FDR adj. q-Value')
-  o <- order(tout[,3])
+  o <- order(tout[,4])
   rownames(tout) <- 1:nrow(tout)
   tout[o,]
 }
