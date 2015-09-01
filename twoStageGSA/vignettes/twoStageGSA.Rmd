@@ -16,6 +16,7 @@ First we load `twoStageGSA`. We will also make use of pathway database
 library(twoStageGSA)
 library(reactome.db)
 library(hgu95av2.db)
+install.packages(c('KEGG.db','GO.db'))
 ```
 
 ```{r}

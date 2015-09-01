@@ -1,18 +1,9 @@
-## Apply focus step of procedure
-
-
-
-
-
-
-
 #' Perform focus step of two-stage GSA
 #' 
 #' Performs focus step of two-stage GSA. In this step single genes are tested
 #' at significance levels resulting from the screening step, which only tests
 #' gene sets.
 #' 
-#' %% ~~ If necessary, more details than the description above ~~
 #' 
 #' @param data Matrix containing expression values. Genes are in rows, samples
 #' in columns.
@@ -20,7 +11,7 @@
 #' genesets
 #' @param genesets List of genesets, given as vectors of gene identifiers
 #' @param sigSets Output from screening step
-#' @param genes Vector with gene identifier
+#' @param genes Vector with gene identifier - defaults to rownames
 #' @param B Number of resampling iterations (e.g. for Westfall & Young)
 #' @param test name of test function, if reuse.p is FALSE a test function that
 #' given if reuse.p is TRUE a function that given takes a formula argument
@@ -31,47 +22,7 @@
 #' @param reuse.p Sometimes it is desired to re-use the p-values of a previous
 #' differential gene expression analysis. If TRUE test should be a vector of
 #' unadjusted p-values
-#' @return %% ~Describe the value returned %% If it is a LIST, use %%
-#' \item{comp1 }{Description of 'comp1'} %% \item{comp2 }{Description of
-#' 'comp2'} %% ...
-#' @note %% ~~further notes~~
-#' @author %% ~~who you are~~
-#' @seealso %% ~~objects to See Also as \code{\link{help}}, ~~~
-#' @references %% ~put references to the literature/web site here ~
-#' @keywords ~kwd1 ~kwd2
-#' @examples
-#' 
-#' ##---- Should be DIRECTLY executable !! ----
-#' ##-- ==>  Define data, use random,
-#' ##--	or do  help(data=index)  for the standard data sets.
-#' 
-#' ## The function is currently defined as
-#' function (data, labels, genesets, sigSets, B = 100, test = "wilcoxon", 
-#'     side = "abs", adjust = "WY", reuse.p = F) 
-#' {
-#'     focusWY <- function(idx) {
-#'         idx <- which(rownames(data) %in% genesets[[idx]])
-#'         out <- mt.minP(data[idx, ], labels, test = test, B = B, 
-#'             side = side)
-#'         ans <- out$adjp
-#'         names(out) <- out$index
-#'     }
-#'     focusBonfH <- function(idx) {
-#'         testfun <- match.fun(test)
-#'         idx <- rownames(data)[which(rownames(data) %in% genesets[[idx]])]
-#'         if (reuse.p) {
-#'             return(testfun(idx))
-#'         }
-#'         out <- apply(data[idx, ], 1, testfun)
-#'         ans <- p.adjust(out, method = "holm")
-#'         return(ans)
-#'     }
-#'     focusTest <- function(idx) {
-#'         switch(adjust, WY = focusWY(idx), holm = focusBonfH(idx))
-#'     }
-#'     pWY <- lapply(sigSets, focusTest)
-#'     return(pWY)
-#'   }
+#' @author Florian Klinglmueller 
 #' 
 #' @export focus
 focus <- function(data,labels,genesets,sigSets,genes=rownames(data),B=100,test="wilcoxon",side='abs',adjust="WY",reuse.p=F){
@@ -112,3 +63,32 @@ focus <- function(data,labels,genesets,sigSets,genes=rownames(data),B=100,test="
   pWY <- lapply(sigSets,focusTest)
   return(pWY)
 }
+
+
+#' ## The function is currently defined as
+#' function (data, labels, genesets, sigSets, B = 100, test = "wilcoxon", 
+#'     side = "abs", adjust = "WY", reuse.p = F) 
+#' {
+#'     focusWY <- function(idx) {
+#'         idx <- which(rownames(data) %in% genesets[[idx]])
+#'         out <- mt.minP(data[idx, ], labels, test = test, B = B, 
+#'             side = side)
+#'         ans <- out$adjp
+#'         names(out) <- out$index
+#'     }
+#'     focusBonfH <- function(idx) {
+#'         testfun <- match.fun(test)
+#'         idx <- rownames(data)[which(rownames(data) %in% genesets[[idx]])]
+#'         if (reuse.p) {
+#'             return(testfun(idx))
+#'         }
+#'         out <- apply(data[idx, ], 1, testfun)
+#'         ans <- p.adjust(out, method = "holm")
+#'         return(ans)
+#'     }
+#'     focusTest <- function(idx) {
+#'         switch(adjust, WY = focusWY(idx), holm = focusBonfH(idx))
+#'     }
+#'     pWY <- lapply(sigSets, focusTest)
+#'     return(pWY)
+#'   }

@@ -1,23 +1,17 @@
 ## Apply screening stage of procedure
 
-
-
-
-
-
-
 #' Performs the screening step
 #' 
-#' %% ~~ A concise (1-5 lines) description of what the function does. ~~
+#' twoStageGSA provides a couple of screening test procedures. Those
+#' are 'globalTest', 'invNormal', 'hotellingT', and
+#' 'nettleton'. Custom functions may be used. In that case settest has
+#' to point to a function with the name matching
+#' paste('screening_',settest). The corresponding function needs to
+#' return an unadjusted p-value for a given geneset. See
+#' \code{\link{screening-tests}} and the vignette for further details
+#' and some examples.
 #' 
-#' twoStageGSA provides a couple of screening test procedures. Those are
-#' 'globalTest', 'invNormal', 'hotellingT', and 'nettleton'. Custom functions
-#' may be used. In that case settest has to point to a function with the name
-#' matching paste('screening_',settest). The corresponding function needs to
-#' return an unadjusted p-value for a given geneset. See the vignette for some
-#' examples.
-#' 
-#' @param data %% ~~Describe \code{data} here~~
+#' @param data 
 #' @param labels Object defining the group labels of the dataset. E.g. for
 #' globalTest this may be a factor.
 #' @param genesets A list whose elements are vectors of gene identifiers
@@ -25,53 +19,14 @@
 #' @param genes vector of gene identifiers specifying the gene each row of data
 #' corresponds to and that match to the identifyers used to define gene sets.
 #' If not given rownames are assumed to be gene identifyers.
-#' @param B %% ~~Describe \code{B} here~~
-#' @param q %% ~~Describe \code{q} here~~
+#' @param B 
+#' @param q 
 #' @param settest A character string giving the name of the screening test
 #' procedure. Either one of the methods already implemented in the package, or
 #' a custom test function (see Details).
-#' @param min %% ~~Describe \code{min} here~~
-#' @param max %% ~~Describe \code{max} here~~
-#' @return %% ~Describe the value returned %% If it is a LIST, use %%
-#' \item{comp1 }{Description of 'comp1'} %% \item{comp2 }{Description of
-#' 'comp2'} %% ...
-#' @note %% ~~further notes~~
-#' @author %% ~~who you are~~
-#' @seealso %% ~~objects to See Also as \code{\link{help}}, ~~~
-#' @references %% ~put references to the literature/web site here ~
-#' @keywords ~kwd1 ~kwd2
-#' @examples
 #' 
-#' ##---- Should be DIRECTLY executable !! ----
-#' ##-- ==>  Define data, use random,
-#' ##--	or do  help(data=index)  for the standard data sets.
-#' 
-#' ## The function is currently defined as
-#' function (data, labels, genesets, B = 0, q = 0.05, settest = "globalTest", 
-#'     min = 6, max = 100) 
-#' {
-#'     toSmall <- which(sapply(genesets, function(set) sum(rownames(data) %in% 
-#'         set) <= min))
-#'     toLarge <- which(sapply(genesets, function(set) sum(rownames(data) %in% 
-#'         set) >= max))
-#'     genesets <- genesets[-c(toSmall, toLarge)]
-#'     inSet <- unlist(sapply(genesets, function(set) which(rownames(data) %in% 
-#'         set)))
-#'     impW <- tabulate(inSet)/length(inSet)
-#'     inSet <- sort(unique(inSet))
-#'     data <- data[inSet, ]
-#'     S <- length(genesets)
-#'     n <- max(sapply(genesets, length))
-#'     G <- nrow(data)
-#'     m <- ncol(data)
-#'     pmrpp <- sapply(genesets, match.fun(settest), perm = B, d = data, 
-#'         l = labels)
-#'     names(pmrpp) <- names(genesets)
-#'     q.vals <- p.adjust(pmrpp, method = "fdr")
-#'     sigSets <- names(genesets)[which(q.vals <= q)]
-#'     return(list(sigSets = sigSets, qVal = q.vals))
-#'   }
-#' 
+#' @param min 
+#' @param max 
 #' @export screening
 screening <- function(data,labels,genesets,genes=rownames(data),B=0,q=.05,settest='globalTest',min=6,max=100){
   if(is.null(names(genesets))){
@@ -112,3 +67,4 @@ screening <- function(data,labels,genesets,genes=rownames(data),B=0,q=.05,settes
   return(list(sigSets=sigSets,qVal=q.vals,size=L))
 
 }
+
