@@ -16,11 +16,12 @@ First we load `twoStageGSA`. We will also make use of pathway database
 library(twoStageGSA)
 library(reactome.db)
 library(hgu95av2.db)
-install.packages(c('KEGG.db','GO.db'))
+library(KEGG.db)
+library(GO.db)
+library(pander)
 ```
 
 ```{r}
-
 m <- 6
 G <- 1000
 data <- matrix(rnorm(m*G),ncol= m) +
@@ -87,15 +88,25 @@ databases to the reporting functions.
 
 ```{r}
 
-reportScreening(out,pw.annotation = reactome.db,
-                pw.kv = c('PATHID','PATHNAME'))
-reportFocus(out,fc,diff,q=.5,
-            pw.annotation=reactome.db,
-            gene.annotation = hgu95av2.db,
-            pw.kv = c('PATHID','PATHNAME'),
-            gene.kv = c('PROBEID','SYMBOL'))
+screen <- reportScreening(out,pw.annotation = reactome.db,
+                          pw.kv = c('PATHID','PATHNAME'))
+
+focus <- reportFocus(out,fc,diff,q=.5,
+                     pw.annotation=reactome.db,
+                     gene.annotation = hgu95av2.db,
+                     pw.kv = c('PATHID','PATHNAME'),
+                     gene.kv = c('PROBEID','SYMBOL'))
 ```
 
+```{r screening_result,results='markup'}
+pander(screen)
+
+```
+
+```{r focus_result,results='markup'}
+pander(focus)
+
+```
 ## Different global test procedures for the screening step
 
 ``twoStageGSA' provides several global test procedures to test the
@@ -132,14 +143,19 @@ screening_myminps <- function(set,perm,d,l){
 out <- screening(data,labels,geneSets,B=0,settest='myminps')
 
 fc <- focus(data,labels,geneSets,out$sigSets,test=myps,adj='holm',reuse.p=T)
-reportFocus(out,fc,diff,q=.5,
-            pw.annotation=reactome.db,
-            gene.annotation = hgu95av2.db,
-            pw.kv = c('PATHID','PATHNAME'),
-            gene.kv = c('PROBEID','SYMBOL'))
+
+focus <- reportFocus(out,fc,diff,q=.5,
+                     pw.annotation=reactome.db,
+                     gene.annotation = hgu95av2.db,
+                     pw.kv = c('PATHID','PATHNAME'),
+                     gene.kv = c('PROBEID','SYMBOL'))
 
 ```
 
+```{r focus_results_reuse}
+pander(focus)
+
+```
 ### Inverse normal combination test
 
 ### Simes test

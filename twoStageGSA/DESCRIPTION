@@ -16,3 +16,4 @@ Suggests:
 Description: Provides a Flexible Two Stage Procedure for Identifying Gene Sets
     that are Differentially Expressed
 License: MIT
+RoxygenNote: 5.0.1

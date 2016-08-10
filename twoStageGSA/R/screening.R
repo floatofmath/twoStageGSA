@@ -11,7 +11,7 @@
 #' \code{\link{screening-tests}} and the vignette for further details
 #' and some examples.
 #' 
-#' @param data 
+#' @param data Expression values as a matrix with genes in rows
 #' @param labels Object defining the group labels of the dataset. E.g. for
 #' globalTest this may be a factor.
 #' @param genesets A list whose elements are vectors of gene identifiers
@@ -19,16 +19,17 @@
 #' @param genes vector of gene identifiers specifying the gene each row of data
 #' corresponds to and that match to the identifyers used to define gene sets.
 #' If not given rownames are assumed to be gene identifyers.
-#' @param B 
-#' @param q 
+#' @param B Number of randomizations to use if a randomization test is used
+#' @param q q-Value cutoff for selection
 #' @param settest A character string giving the name of the screening test
 #' procedure. Either one of the methods already implemented in the package, or
 #' a custom test function (see Details).
 #' 
-#' @param min 
-#' @param max 
+#' @param min minimum number of genes per set for which measurements are available
+#' @param max maximum number of genes per set for which measurements are available
+#' @param parcomp should parallel processing be used and which implementation of mclapply 
 #' @export screening
-screening <- function(data,labels,genesets,genes=rownames(data),B=0,q=.05,settest='globalTest',min=6,max=100){
+screening <- function(data,labels,genesets,genes=rownames(data),B=0,q=.05,settest='globalTest',min=6,max=100,parcomp=c('none','parallel','bt88.03.704')){
   if(is.null(names(genesets))){
       stop("names(genesets) is NULL: genesets must have names!")
   }
@@ -48,7 +49,7 @@ screening <- function(data,labels,genesets,genes=rownames(data),B=0,q=.05,settes
   inSet <- sort(unique(inSet))
   data <- data[inSet,]
   genes <- genes[inSet]
-  # in case not all rows are unique genes
+                                        # in case not all rows are unique genes
   idSets <- lapply(genesets,function(set) which(genes %in% set))
   ## some helpful constants
   S <- length(genesets)
@@ -58,7 +59,13 @@ screening <- function(data,labels,genesets,genes=rownames(data),B=0,q=.05,settes
   m <- ncol(data)
   
   ## compute set test p.value and correct FDR
-  pmrpp <- sapply(idSets,match.fun(paste("screening_",settest,sep='')),perm=B,d=data,l=labels)
+  parcomp <- match.arg(parcomp)
+  myapply <- switch(parcomp,
+                    'none'=lapply,
+                    'parallel'=mclapply,
+                    'bt88.03.704'=bt88.03.704::mclapply2)
+  fun <- match.fun(paste("screening_",settest,sep=''))
+  pmrpp <- simplify2array(myapply(idSets,function(set) fun(set,perm=B,d=data,l=labels)))
   names(pmrpp) <- names(genesets)
   q.vals <- p.adjust(pmrpp,method='fdr')
 

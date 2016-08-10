@@ -11,6 +11,7 @@
 NULL
 
 ##' @rdname screening-tests
+##' @export
 screening_hotellingT <- function(set,perm,d,l){
   hotelling <- function(d1,d2){
     k <- ncol(d1)
@@ -41,6 +42,7 @@ screening_hotellingT <- function(set,perm,d,l){
 }
 
 ##' @rdname screening-tests
+##' @export
 screening_globalTest <- function(set,perm,d,l){
   if(is.null(rownames(d))) {
       ## somehow gt does require rownames
@@ -52,6 +54,7 @@ screening_globalTest <- function(set,perm,d,l){
 }
 
 ##' @rdname screening-tests
+##' @export
 screening_invnormT <- function(set,perm,d,l){
   p <- apply(d[set,],1,function(y) t.test(y~l)$p.value)
   q <- sum(qnorm(1-p))/sqrt(length(p))
@@ -59,6 +62,7 @@ screening_invnormT <- function(set,perm,d,l){
 }
 
 ##' @rdname screening-tests
+##' @export
 screening_nettleton <- function(set,perm,d,l) {
     e.com=function (y) {#Nettleton
         K=ncol(y)
