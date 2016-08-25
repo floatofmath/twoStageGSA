@@ -49,7 +49,7 @@ screening_globalTest <- function(set,perm,d,l){
       rownames(d) <- 1:nrow(d)
   }
   out <- gt(l,t(d[set,]),model='logistic',permutations=perm)
-  p <- p.value(out)
+  p <- out@result[1]
   return(p)
 }
 
