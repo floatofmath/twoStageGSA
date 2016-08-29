@@ -60,7 +60,7 @@ focus <- function(data,labels,genesets,sigSets,genes=rownames(data),B=100,test="
            holm = focusBonfH(idx))
   }
   
-  pWY <- lapply(sigSets,focusTest)
+  pWY <- lapply(sigSets@sigSets,focusTest)
   return(pWY)
 }
 
