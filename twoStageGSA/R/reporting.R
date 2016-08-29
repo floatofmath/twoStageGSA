@@ -65,9 +65,15 @@ reportFocus <- function(scr,pval,fc,q,linebreak=75,pw.annotation,gene.annotation
   }
   if(length(scr$sigSets)<1) return(NULL)
   if(length(scr$sigSets)==1){
-    return(parser(unlist(pval)))
+      ## names(pval) <- sets[[scr$sigSets]]
+      return(parser(unlist(pval)))
   }
-  
+  ## names(pval) <- scr$sigSets
+  ## pval <- lapply(names(pval),function(set) {
+  ##                    ans <- pval[[set]]
+  ##                    names(ans) <- sets[[set]]
+  ##                    ans
+  ##                })
   out <- sapply(pval,parser)
   names(out) <- scr$sigSets
   out <- out[!sapply(out,is.null)]
